@@ -28,7 +28,6 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO carry;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO carry;
 ```
 
-## Стиль создания
 ### Back
 В силу простоты приложения принято решение не создавать классический MVC,
 а обойтись простым модулем совмещающим routings и запросы к БД.
