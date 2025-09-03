@@ -40,8 +40,10 @@ npm run table:create: create table
 npm run table:seed: table seed default
 ```
 #### сборка:
+```
 Node v22.17.1
 npm 10.9.2
+```
 
 ### Front
 В качестве основтого элемента отабражения таблицы сделан компонент `VueTable (c VueTableRow)`
@@ -57,4 +59,4 @@ build: build,
 dev: vevelopment for port 8085
 ```
 #### сборка:
-Vue: 2.7.14
+``Vue: 2.7.14```
