@@ -1,30 +1,24 @@
 <script>
-import { mapState, mapGetters, mapActions } from 'vuex';
+import { mapState, mapActions } from 'vuex';
+import VueTable from './components/VueTable.vue';
 import CarForm from './components/CarForm.vue';
 
 export default {
   name: 'App',
 
   components: {
-    CarForm,
+    VueTable,
+    CarForm
   },
 
   data() {
     return {
-      showModal: false,
-      modalMode: 'add', // 'add' или 'edit'
+      showModal: false
     };
   },
 
   computed: {
-    ...mapState(['cars', 'selectedCar', 'shops']),
-
-    displayedCars() {
-      if (this.selectedCar) {
-        return this.$store.getters.carsWithHighlight(this.selectedCar.brand, this.selectedCar.model);
-      }
-      return this.cars.map((car) => ({ ...car, isSimilar: false }));
-    },
+    ...mapState(['cars', 'selectedCar', 'shops'])
   },
 
   async mounted() {
@@ -33,22 +27,14 @@ export default {
   },
 
   methods: {
-    ...mapActions(['loadCars', 'loadShops']),
-
-    formatPrice(price) {
-      return new Intl.NumberFormat('ru-RU', {
-        style: 'currency',
-        currency: 'RUB',
-        minimumFractionDigits: 0,
-      }).format(price);
-    },
+    ...mapActions(['loadShops','loadCars', 'setSelectedCar']),
 
     selectCar(car) {
-      this.$store.commit('SET_SELECTED_CAR', car);
+      this.setSelectedCar(car);
     },
 
     showAddForm() {
-      this.$store.commit('SET_SELECTED_CAR', null);
+      this.setSelectedCar(null);
       this.showModal = true;
     },
 
@@ -62,10 +48,11 @@ export default {
       this.showModal = false;
     },
 
-    async refreshData() {
+    async handleSave() {
       await this.loadCars();
-    },
-  },
+      this.hideModal();
+    }
+  }
 };
 </script>
 
@@ -77,161 +64,191 @@ export default {
       </header>
 
       <main>
-        <div class="table-container">
-          <table class="cars-table">
-            <thead>
-              <tr>
-                <th>Выбор</th>
-                <th>Марка</th>
-                <th>Модель</th>
-                <th>Цена</th>
-                <th>Магазин</th>
-                <th>Телефон</th>
-              </tr>
-            </thead>
-            <tbody>
-              <tr v-for="car in displayedCars" :key="car.id" :class="{ highlighted: car.isSimilar }">
-                <td>
-                  <input type="checkbox" :checked="selectedCar && selectedCar.id === car.id" @change="selectCar(car)" />
-                </td>
-                <td>{{ car.brand }}</td>
-                <td>{{ car.model }}</td>
-                <td :class="{ 'price-highlight': car.isSimilar }" class="price-cell">
-                  {{ formatPrice(car.price) }}
-                </td>
-                <td>{{ car.shop }}</td>
-                <td>{{ car.phone }}</td>
-              </tr>
-            </tbody>
-          </table>
-        </div>
+        <vue-table
+          :cars="cars"
+          :selected-car="selectedCar"
+          @select-car="selectCar"
+        />
 
         <div class="actions-panel">
-          <button @click="showAddForm" class="btn btn-primary">Добавить</button>
-          <button @click="showEditForm" :disabled="!selectedCar" class="btn btn-secondary">Изменить</button>
+          <button
+            @click="showAddForm"
+            class="btn btn-primary"
+            title="Добавить новый автомобиль"
+          >
+            Добавить
+          </button>
+          <button
+            @click="showEditForm"
+            :disabled="!selectedCar"
+            class="btn btn-secondary"
+            title="Редактировать выбранный автомобиль"
+          >
+            Изменить
+          </button>
         </div>
       </main>
     </div>
 
-    <CarForm
-			:visible="showModal"
-			:car="selectedCar"
-			:shops="shops"
-			@close="hideModal"
-			@saved="refreshData"
-		/>
+    <car-form
+      :visible="showModal"
+      :car="selectedCar"
+      :shops="shops"
+      @close="hideModal"
+      @saved="handleSave"
+    />
   </div>
 </template>
 
-<style>
-* {
-  margin: 0;
-  padding: 0;
-  box-sizing: border-box;
-}
-
-body {
-  font-family: 'Arial', sans-serif;
+<style scoped>
+#app {
+  min-height: 100vh;
   background-color: #f5f5f5;
+  padding: 20px 0;
 }
 
 .container {
-  max-width: 1200px;
+  max-width: 1400px;
   margin: 0 auto;
-  padding: 20px;
+  padding: 0 20px;
 }
 
 header {
   text-align: center;
   margin-bottom: 30px;
+  padding: 30px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
 }
 
 header h1 {
   color: #333;
-  font-size: 2.5em;
-  margin-bottom: 10px;
-}
-
-.table-container {
-  background: white;
-  border-radius: 8px;
-  overflow: hidden;
-  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
-  margin-bottom: 20px;
-}
-
-.cars-table {
-  width: 100%;
-  border-collapse: collapse;
-}
-
-.cars-table th,
-.cars-table td {
-  padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
-}
-
-.cars-table th {
-  background-color: #007bff;
-  color: white;
-  font-weight: bold;
-}
-
-.cars-table tr:hover {
-  background-color: #f8f9fa;
-}
-
-.cars-table .highlighted {
-  background-color: #fff3cd;
-}
-
-.cars-table .price-highlight {
-  background-color: #ffc107;
-  font-weight: bold;
-}
-
-.price-cell {
-  text-align: right;
-  font-family: 'Courier New', monospace;
+  font-size: 2.8em;
+  margin: 0;
+  font-weight: 700;
 }
 
 .actions-panel {
   display: flex;
-  gap: 10px;
+  gap: 20px;
   justify-content: center;
+  padding: 25px;
+  background: white;
+  border-radius: 10px;
+  box-shadow: 0 2px 10px rgba(0, 0, 0, 0.1);
+  margin-top: 20px;
 }
 
 .btn {
-  padding: 10px 20px;
+  padding: 16px 32px;
   border: none;
-  border-radius: 4px;
+  border-radius: 8px;
   cursor: pointer;
-  font-size: 14px;
-  font-weight: bold;
-  transition: background-color 0.3s;
+  font-size: 16px;
+  font-weight: 600;
+  transition: all 0.3s ease;
+  min-width: 160px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 10px;
 }
 
 .btn:disabled {
-  opacity: 0.6;
+  opacity: 0.5;
   cursor: not-allowed;
+  transform: none !important;
 }
 
 .btn-primary {
   background-color: #007bff;
   color: white;
+  box-shadow: 0 4px 15px rgba(0, 123, 255, 0.3);
 }
 
 .btn-primary:hover:not(:disabled) {
   background-color: #0056b3;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(0, 123, 255, 0.4);
 }
 
 .btn-secondary {
   background-color: #6c757d;
   color: white;
+  box-shadow: 0 4px 15px rgba(108, 117, 125, 0.3);
 }
 
 .btn-secondary:hover:not(:disabled) {
   background-color: #545b62;
+  transform: translateY(-2px);
+  box-shadow: 0 6px 20px rgba(108, 117, 125, 0.4);
+}
+
+.btn-icon {
+  font-size: 18px;
+  font-weight: bold;
+}
+
+/* Адаптивность */
+@media (max-width: 1024px) {
+  .container {
+    padding: 0 15px;
+  }
+
+  header {
+    padding: 25px;
+  }
+
+  header h1 {
+    font-size: 2.4em;
+  }
+}
+
+@media (max-width: 768px) {
+  #app {
+    padding: 15px 0;
+  }
+
+  .container {
+    padding: 0 10px;
+  }
+
+  header {
+    padding: 20px 15px;
+    margin-bottom: 20px;
+  }
+
+  header h1 {
+    font-size: 2em;
+  }
+
+  .actions-panel {
+    flex-direction: column;
+    gap: 15px;
+    padding: 20px;
+    margin-top: 15px;
+  }
+
+  .btn {
+    width: 100%;
+    min-width: auto;
+    padding: 14px 24px;
+  }
+}
+
+@media (max-width: 480px) {
+  header h1 {
+    font-size: 1.8em;
+  }
+
+  .btn {
+    padding: 12px 20px;
+    font-size: 15px;
+  }
+
+  .btn-icon {
+    font-size: 16px;
+  }
 }
 </style>

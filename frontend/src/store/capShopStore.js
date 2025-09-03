@@ -82,11 +82,11 @@ export default new Vuex.Store({
      */
     async addCar({ commit }, carData) {
       try {
-				const payload = {
-        ...carData,
-        price: parseFloat(carData.price),
-        shop_id: parseInt(carData.shop_id, 10)
-      };
+        const payload = {
+          ...carData,
+          price: parseFloat(carData.price),
+          shop_id: parseInt(carData.shop_id, 10),
+        };
         const response = await axios.post('/api/cars/new', payload);
         commit('ADD_CAR', response.data);
         return response.data;
@@ -101,11 +101,11 @@ export default new Vuex.Store({
      */
     async updateCar({ commit }, carData) {
       try {
-				const payload = {
-        ...carData,
-        price: parseFloat(carData.price),
-        shop_id: parseInt(carData.shop_id, 10)
-      };
+        const payload = {
+          ...carData,
+          price: parseFloat(carData.price),
+          shop_id: parseInt(carData.shop_id, 10),
+        };
         const response = await axios.post(`/api/cars/${carData.id}`, payload);
         commit('UPDATE_CAR', response.data);
         return response.data;
@@ -113,6 +113,10 @@ export default new Vuex.Store({
         console.error('Ошибка при обновлении автомобиля:', error);
         throw error;
       }
+    },
+
+    setSelectedCar({ commit }, car) {
+      commit('SET_SELECTED_CAR', car);
     },
   },
 
@@ -123,9 +127,7 @@ export default new Vuex.Store({
     carsWithHighlight: (state) => (selectedBrand, selectedModel) => {
       return state.cars.map((car) => ({
         ...car,
-        isSimilar: selectedBrand && selectedModel
-										? car.brand === selectedBrand && car.model === selectedModel
-										: false,
+        isSimilar: selectedBrand && selectedModel ? car.brand === selectedBrand && car.model === selectedModel : false,
       }));
     },
   },
