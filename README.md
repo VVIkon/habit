@@ -3,7 +3,7 @@
 Тестовое задание для KeyHabit
 
 ## DB carsdb (PostgreSQL)
-
+```
 sudo -u postgres psql
 -- Создание пользователя
 CREATE USER carry WITH PASSWORD 'carry';
@@ -26,7 +26,7 @@ GRANT ALL PRIVILEGES ON ALL TABLES IN SCHEMA public TO carry;
 GRANT ALL PRIVILEGES ON ALL SEQUENCES IN SCHEMA public TO carry;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON TABLES TO carry;
 ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO carry;
-
+```
 
 ## Стиль создания
 ### Back
