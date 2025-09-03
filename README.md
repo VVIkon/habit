@@ -32,6 +32,17 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO carry;
 ```
 В силу простоты приложения принято решение не создавать классический MVC,
 а обойтись простым модулем совмещающим routings и запросы к БД.
+#### Config .env
+```
+NODE_ENV=development
+PORT=8084
+DB_HOST=192.168.1.104 
+DB_PORT=5432
+DB_NAME=cardb
+DB_USER=carry
+DB_PASSWORD=carry
+```
+
 ```
 По умолчанию `http://localhost:8084/`
 ```
@@ -45,6 +56,8 @@ npm run table:seed: table seed default
 Node v22.17.1
 npm 10.9.2
 ```
+
+
 
 ### Front
 ```
