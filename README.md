@@ -33,6 +33,24 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO carry;
 В силу простоты приложения принято решение не создавать классический MVC,
 а обойтись простым модулем совмещающим routings и запросы к БД.
 
+По умолчанию `http://localhost:8084/`
+```
+npm run start: start
+npm run dev: dev debug (nodemon)
+npm run table:create: create table
+npm run table:seed: table seed default
+```
+
 ### Front
-В роли основного элемента отображения выбран `<table>`
-остальная обвязка - стандартна.
+В качестве основтого элемента отабражения таблицы сделан компонент `VueTable (c VueTableRow)`
+В компонент добавлен `selectedCar` - как задел на будущее расширение
+Модальная форма - `CarForm`. Позволяет вводить новый и изменять выбранный автомобиль.
+
+По умолчанию `http://localhost:8085/`
+
+```
+npm run:
+serve: start,
+build: build,
+dev: vevelopment for port 8085
+```
