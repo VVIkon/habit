@@ -1,0 +1,13 @@
+
+
+GET http://localhost:8084/
+content-type: application/json
+###
+
+GET http://localhost:8084/12
+content-type: application/json
+###
+GET http://localhost:8084/shops
+content-type: application/json
+###
+
