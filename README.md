@@ -34,5 +34,5 @@ ALTER DEFAULT PRIVILEGES IN SCHEMA public GRANT ALL ON SEQUENCES TO carry;
 а обойтись простым модулем совмещающим routings и запросы к БД.
 
 ### Front
-В роли основного элемента отображения выбран <table>
+В роли основного элемента отображения выбран `<table>`
 остальная обвязка - стандартна.
