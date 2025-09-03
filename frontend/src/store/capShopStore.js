@@ -82,7 +82,12 @@ export default new Vuex.Store({
      */
     async addCar({ commit }, carData) {
       try {
-        const response = await axios.post('/api/cars/new', carData);
+				const payload = {
+        ...carData,
+        price: parseFloat(carData.price),
+        shop_id: parseInt(carData.shop_id, 10)
+      };
+        const response = await axios.post('/api/cars/new', payload);
         commit('ADD_CAR', response.data);
         return response.data;
       } catch (error) {
@@ -96,7 +101,12 @@ export default new Vuex.Store({
      */
     async updateCar({ commit }, carData) {
       try {
-        const response = await axios.post(`/api/cars/${carData.id}`, carData);
+				const payload = {
+        ...carData,
+        price: parseFloat(carData.price),
+        shop_id: parseInt(carData.shop_id, 10)
+      };
+        const response = await axios.post(`/api/cars/${carData.id}`, payload);
         commit('UPDATE_CAR', response.data);
         return response.data;
       } catch (error) {

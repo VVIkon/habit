@@ -3,7 +3,7 @@ const { defineConfig } = require('@vue/cli-service')
 module.exports = defineConfig({
   transpileDependencies: true,
 
-  // Настройки dev сервера
+  // dev сервер
   devServer: {
     port: 8085, // Порт frontend приложения
     open: false, // Автоматически открывать браузер
@@ -20,12 +20,6 @@ module.exports = defineConfig({
           '^/api': '/api' // Можно изменить если нужно
         }
       },
-      // '/': {
-      //   target: 'http://localhost:8084', // Для корневых запросов
-      //   changeOrigin: true,
-      //   secure: false,
-      //   logLevel: 'debug'
-      // }
     }
   },
 

@@ -1,25 +1,24 @@
 /**
  * Маршруты API для автомобилей
  */
-const express = require("express");
+const express = require('express');
 const router = express.Router();
-const pool = require("../config/database");
+const pool = require('../config/database');
 
 // Routies
-router.get("/api/shops", (req, res) => getShops(res));
-router.get("/api/cars", (req,res) => getAutos(res));
-router.post("/api/cars/new", (req, res) => setAuto(req,res));
-router.get("/api/cars/:id", (req, res) => getAuto(req, res));
-router.post("/api/cars/:id", (req, res) => updateAuto(req, res));
-
+router.get('/api/shops', (req, res) => getShops(res));
+router.get('/api/cars', (req, res) => getAutos(res));
+router.post('/api/cars/new', (req, res) => setAuto(req, res));
+router.get('/api/cars/:id', (req, res) => getAuto(req, res));
+router.post('/api/cars/:id', (req, res) => updateAuto(req, res));
 
 // DB Service
 /**
- * GET / - Получение всех автомобилей с информацией о магазинах
+ * GET /api/cars - Получение всех автомобилей с информацией о магазинах
  */
 const getAutos = async (res) => {
-	try {
-		const query = `
+  try {
+    const query = `
 		SELECT
 		c.id,
 		c.brand,
@@ -32,18 +31,18 @@ const getAutos = async (res) => {
 		ORDER BY c.brand, c.model
     `;
 
-		const result = await pool.query(query);
+    const result = await pool.query(query);
     res.json(result.rows);
   } catch (error) {
-    console.error("Ошибка при получении данных:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error('Ошибка при получении данных:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
-}
+};
 
 /**
- * GET / - Получение данных по магазинам
+ * GET /api/shops - Получение данных по магазинам
  */
-	const getShops = async (res) => {
+const getShops = async (res) => {
   try {
     const query = `
       SELECT
@@ -57,15 +56,15 @@ const getAutos = async (res) => {
     const result = await pool.query(query);
     res.json(result.rows);
   } catch (error) {
-    console.error("Ошибка при получении данных:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error('Ошибка при получении данных:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
 
 /**
- * GET / - Получение aвтомобиля по id
+ * GET /api/cars/:id - Получение aвтомобиля по id
  */
-const getAuto = async (req, res) =>	{
+const getAuto = async (req, res) => {
   const { id } = req.params;
   try {
     const query = `
@@ -85,16 +84,31 @@ const getAuto = async (req, res) =>	{
     const result = await pool.query(query, [id]);
     res.json(result.rows);
   } catch (error) {
-    console.error("Ошибка при получении данных:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error('Ошибка при получении данных:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
 
 /**
- * POST /api/new - Добавление нового автомобиля
+ * POST /api/cars/new - Добавление нового автомобиля
  */
 const setAuto = async (req, res) => {
-	const { brand, model, price, shop_id } = req.body;
+  const { brand, model, price, shop_id } = req.body;
+
+  if (!brand || !model || !price || !shop_id) {
+    return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+  }
+
+  const numericPrice = parseFloat(price);
+  const numericShopId = parseInt(shop_id, 10);
+
+  if (isNaN(numericPrice) || numericPrice <= 0) {
+    return res.status(400).json({ error: 'Цена должна быть положительным числом' });
+  }
+
+  if (isNaN(numericShopId) || numericShopId <= 0) {
+    return res.status(400).json({ error: 'Неверный идентификатор магазина' });
+  }
 
   try {
     const query = `
@@ -103,20 +117,40 @@ const setAuto = async (req, res) => {
       RETURNING *
     `;
 
-    const result = await pool.query(query, [brand, model, price, shop_id]);
+    const result = await pool.query(query, [brand, model, numericPrice, numericShopId]);
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Ошибка при добавлении автомобиля:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error('Ошибка при добавлении автомобиля:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
 
 /**
- * POST /api/:id - Обновление данных автомобиля по ID
+ * POST /api/cars/:id - Обновление данных автомобиля по ID
  */
 const updateAuto = async (req, res) => {
   const { id } = req.params;
   const { brand, model, price, shop_id } = req.body;
+
+  if (!brand || !model || !price || !shop_id) {
+    return res.status(400).json({ error: 'Все поля обязательны для заполнения' });
+  }
+
+  const numericPrice = parseFloat(price);
+  const numericShopId = parseInt(shop_id, 10);
+  const numericId = parseInt(id, 10);
+
+  if (isNaN(numericId) || numericId <= 0) {
+    return res.status(400).json({ error: 'Неверный идентификатор автомобиля' });
+  }
+
+  if (isNaN(numericPrice) || numericPrice <= 0) {
+    return res.status(400).json({ error: 'Цена должна быть положительным числом' });
+  }
+
+  if (isNaN(numericShopId) || numericShopId <= 0) {
+    return res.status(400).json({ error: 'Неверный идентификатор магазина' });
+  }
 
   try {
     const query = `
@@ -126,16 +160,16 @@ const updateAuto = async (req, res) => {
       RETURNING *
     `;
 
-    const result = await pool.query(query, [brand, model, price, shop_id, id]);
+    const result = await pool.query(query, [brand, model, numericPrice, numericShopId, numericId]);
 
     if (result.rows.length === 0) {
-      return res.status(404).json({ error: "Автомобиль не найден" });
+      return res.status(404).json({ error: 'Автомобиль не найден' });
     }
 
     res.json(result.rows[0]);
   } catch (error) {
-    console.error("Ошибка при обновлении данных автомобиля:", error);
-    res.status(500).json({ error: "Ошибка сервера" });
+    console.error('Ошибка при обновлении данных автомобиля:', error);
+    res.status(500).json({ error: 'Ошибка сервера' });
   }
 };
 
