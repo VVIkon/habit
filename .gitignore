@@ -123,8 +123,3 @@ Thumbs.db
 # Build
 dist/
 build/
-
-.prettierrc
-.editorconfig
-.vscode
-.eslintrc.json

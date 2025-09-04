@@ -1,6 +1,6 @@
 import Vue from 'vue';
 import App from './App.vue';
-import store from './store/capShopStore';
+import store from './store/carShopStore';
 
 Vue.config.productionTip = false;
 
