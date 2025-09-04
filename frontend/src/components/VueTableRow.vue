@@ -37,13 +37,7 @@ export default {
 
 <template>
   <tr
-    :class="[
-      'table-row',
-      {
-        'row-selected': isSelected,
-        'row-hover': !isSelected
-      }
-    ]"
+    :class="['table-row', { 'row-selected': isSelected, 'row-hover': !isSelected }]"
     @mouseenter="isHovered = true"
     @mouseleave="isHovered = false"
   >
